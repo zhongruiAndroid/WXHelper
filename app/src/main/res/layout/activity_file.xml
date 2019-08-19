@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FileActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvFile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tvDeleteName"
+        android:layout_alignParentTop="true"
+        >
+    </android.support.v7.widget.RecyclerView>
+    <com.github.fastshape.MyTextView
+        android:id="@+id/tvDeleteName"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="下载文件去除.1后缀名"
+        android:textColor="@color/colorPrimary"
+        app:borderColor="@color/colorPrimary"
+        app:borderWidth="2px"
+        app:pressColor="@color/c_F8F8F82"
+        app:radius="25dp"
+        app:solidColor="@color/white"
+        android:layout_alignParentBottom="true"
+        />
+</RelativeLayout>

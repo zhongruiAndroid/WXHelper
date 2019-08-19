@@ -1,55 +1,125 @@
 package com.tools.wx;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.fastshape.MyTextView;
 import com.github.permissions.MyPermission;
 import com.github.permissions.PermissionCallback;
 
 import java.io.File;
 
+import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    final String wxPath="tencent/MicroMsg/Download";
+    final String wxDir="tencent/MicroMsg/Download";
+    final String wxPath = Environment.getDownloadCacheDirectory().getAbsolutePath()+File.separator+wxDir;
+    RecyclerView rvFile;
+    MyTextView tvDeleteName;
+    MyTextView tvOpenDirectory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ToastUtils.init(getApplication());
         setContentView(R.layout.activity_main);
 
-        TextView tvDeleteName   =findViewById(R.id.tvDeleteName);
+
+        tvDeleteName = findViewById(R.id.tvDeleteName);
         tvDeleteName.setOnClickListener(this);
 
-        TextView tvOpenDirectory=findViewById(R.id.tvOpenDirectory);
+        tvOpenDirectory = findViewById(R.id.tvOpenDirectory);
         tvOpenDirectory.setOnClickListener(this);
+
+        rvFile = findViewById(R.id.rvFile);
+
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.tvDeleteName:
-                deleteName();
-            break;
+        switch (v.getId()) {
             case R.id.tvOpenDirectory:
-                MyPermission.get(this).request(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, new PermissionCallback() {
-                    @Override
-                    public void granted() {
-                        openDirectory();
-                    }
-                    @Override
-                    public void denied(String firstDenied) {
-                        ToastUtils.showToast("无权限");
-                    }
-                });
-            break;
+                preRefreshDirector();
+                break;
         }
+    }
+
+    private void preRefreshDirector() {
+        MyPermission.get(this).request(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCallback() {
+            @Override
+            public void granted() {
+                refreshDirector();
+            }
+            @Override
+            public void denied(String firstDenied) {
+                showPromptDialog();
+            }
+        });
+    }
+
+    private void showPromptDialog() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage("打开文件目录需要文件读取权限,请设置权限之后再试");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                openPermission();
+            }
+        });
+        builder.show();
+    }
+
+    private void openPermission() {
+        Intent intent=new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse("package:"+getPackageName()));
+        startActivity(intent);
+    }
+
+    private void refreshDirector() {
+        File file=new File(wxPath);
+        if (file.exists() == false) {
+            noExist();
+            return;
+        }
+
+        File[] files = file.listFiles();
+    }
+
+    private void noExist() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage("微信下载目录读取失败,请手动打开"+wxDir+"路径");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     private void deleteName() {
@@ -57,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openDirectory() {
-        File file=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+wxPath);
+        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + wxPath);
 
 
-        if(file.exists()==false){
+        if (file.exists() == false) {
             ToastUtils.showToast("打开失败");
             return;
         }
@@ -69,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
 
-        Uri contentUri = FileProvider.getUriForFile(this,getPackageName(),file);
+        Uri contentUri = FileProvider.getUriForFile(this, getPackageName(), file);
 
         intent.setDataAndType(contentUri, "*/*");
 
@@ -77,8 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        intent.addCategory(Intent.CATEGORY_OPENABLE);
 
 
-
-       intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
 
         startActivity(intent);
     }

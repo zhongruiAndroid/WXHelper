@@ -1,43 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom|center_horizontal"
     android:orientation="vertical"
     tools:context=".MainActivity">
-    <com.github.fastshape.MyTextView
-        android:id="@+id/tvDeleteName"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvFile"
         android:layout_width="match_parent"
-        android:layout_height="47dp"
-        android:gravity="center"
-        android:text="下载文件去除.1后缀名"
-        android:textColor="@color/colorPrimary"
-        app:borderColor="@color/colorPrimary"
-        app:borderWidth="2px"
-        app:pressColor="@color/c_F8F8F82"
-        app:radius="25dp"
-        app:solidColor="@color/white"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        />
-    <com.github.fastshape.MyTextView
-        android:id="@+id/tvOpenDirectory"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/llBottom"
+        android:layout_alignParentTop="true"
+        >
+    </android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:id="@+id/llBottom"
         android:layout_width="match_parent"
-        android:layout_height="47dp"
-        android:gravity="center"
-        android:text="打开微信下载目录"
-        android:textColor="@color/colorPrimary"
-        app:borderColor="@color/colorPrimary"
-        app:borderWidth="2px"
-        app:pressColor="@color/c_F8F8F82"
-        app:radius="25dp"
-        app:solidColor="@color/white"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
-        />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        >
+        <com.github.fastshape.MyTextView
+            android:id="@+id/tvDeleteName"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="47dp"
+            android:gravity="center"
+            android:text="去除接收文件的.1后缀名"
+            android:textColor="@color/colorPrimary"
+            app:borderColor="@color/colorPrimary"
+            app:borderWidth="2px"
+            app:pressColor="@color/c_F8F8F82"
+            app:topLeftRadius="25dp"
+            app:bottomLeftRadius="25dp"
+            app:solidColor="@color/white"
+            android:layout_marginRight="1dp"
+            />
+        <com.github.fastshape.MyTextView
+            android:id="@+id/tvOpenDirectory"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="47dp"
+            android:gravity="center"
+            android:text="刷新微信下载目录"
+            android:textColor="@color/colorPrimary"
+            app:borderColor="@color/colorPrimary"
+            app:borderWidth="2px"
+            app:pressColor="@color/c_F8F8F82"
+            app:topRightRadius="25dp"
+            app:bottomRightRadius="25dp"
+            app:solidColor="@color/white"
+            android:layout_marginLeft="1dp"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
