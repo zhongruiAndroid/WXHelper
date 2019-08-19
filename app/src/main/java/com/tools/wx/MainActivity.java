@@ -25,6 +25,7 @@ import com.github.permissions.MyPermission;
 import com.github.permissions.PermissionCallback;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 
 import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
 
@@ -101,18 +102,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void refreshDirector() {
-        File file=new File(wxPath);
-        if (file.exists() == false) {
+        File wxFilePath=new File(wxPath);
+        if (wxFilePath.exists() == false) {
             noExist();
             return;
         }
 
-        File[] files = file.listFiles();
+        File[] files = wxFilePath.listFiles();
+        int length = files.length;
+        if(files==null||length==0){
+            ToastUtils.showToast("微信下载目录暂无数据");
+            return;
+        }
+
+        for (int i = 0; i < length; i++) {
+            FileInfo info=new FileInfo();
+            if(info.isFile){
+                File childFile = files[i];
+                info.filePath=childFile.getAbsolutePath();
+                info.fileName=childFile.getName();
+                info.isFile=childFile.isFile();
+                info.size=childFile.length();
+                info.sizeStr=FileUtil.formatFileSize(info.size);
+                info.time=childFile.lastModified();
+                info.timeStr=TimeUtil.timeFormat(info.time);
+                if(info.filePath.endsWith(".apk")){
+                    info.icon=FileUtil.getIconForApk(this,info.filePath);
+                }
+            }
+        }
+
     }
 
     private void noExist() {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setMessage("微信下载目录读取失败,请手动打开"+wxDir+"路径");
+        builder.setMessage("微信下载目录不存在,请手动查看"+wxDir+"路径是否存在");
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
