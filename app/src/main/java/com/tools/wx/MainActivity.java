@@ -1,11 +1,9 @@
 package com.tools.wx;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.Settings;
@@ -14,31 +12,36 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.github.adapter.CustomAdapter;
 import com.github.fastshape.MyTextView;
 import com.github.permissions.MyPermission;
 import com.github.permissions.PermissionCallback;
+import com.github.task.Emitter;
+import com.github.task.Subscriber;
+import com.github.task.Task;
+import com.github.task.TaskException;
+import com.github.task.TaskPerform;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-
-import static android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private Activity activity;
     final String wxDir="tencent/MicroMsg/Download";
     final String wxPath = Environment.getDownloadCacheDirectory().getAbsolutePath()+File.separator+wxDir;
     RecyclerView rvFile;
     MyTextView tvDeleteName;
     MyTextView tvOpenDirectory;
 
+    CustomAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity=this;
         ToastUtils.init(getApplication());
         setContentView(R.layout.activity_main);
 
@@ -51,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         rvFile = findViewById(R.id.rvFile);
 
+        initData();
+
+    }
+
+    private void initData() {
+        ToastUtils.showToast("初始化中,请稍后...");
+        refreshWXDownloadFileList();
     }
 
     @Override
@@ -66,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MyPermission.get(this).request(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, new PermissionCallback() {
             @Override
             public void granted() {
-                refreshDirector();
+                refreshWXDownloadFileList();
             }
             @Override
             public void denied(String firstDenied) {
@@ -101,36 +111,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    private void refreshDirector() {
-        File wxFilePath=new File(wxPath);
-        if (wxFilePath.exists() == false) {
-            noExist();
-            return;
-        }
-
-        File[] files = wxFilePath.listFiles();
-        int length = files.length;
-        if(files==null||length==0){
-            ToastUtils.showToast("微信下载目录暂无数据");
-            return;
-        }
-
-        for (int i = 0; i < length; i++) {
-            FileInfo info=new FileInfo();
-            if(info.isFile){
-                File childFile = files[i];
-                info.filePath=childFile.getAbsolutePath();
-                info.fileName=childFile.getName();
-                info.isFile=childFile.isFile();
-                info.size=childFile.length();
-                info.sizeStr=FileUtil.formatFileSize(info.size);
-                info.time=childFile.lastModified();
-                info.timeStr=TimeUtil.timeFormat(info.time);
-                if(info.filePath.endsWith(".apk")){
-                    info.icon=FileUtil.getIconForApk(this,info.filePath);
+    private void  refreshWXDownloadFileList() {
+        Task.start(new TaskPerform<List<FileInfo>>() {
+            @Override
+            public void perform(Emitter<List<FileInfo>> emitter) throws Exception {
+                List<FileInfo> list=new ArrayList<>();
+                File wxFilePath=new File(wxPath);
+                if (wxFilePath.exists() == false) {
+                    noExist();
+                    emitter.onError(new TaskException("微信下载目录没找到"));
+                }
+                File[] files = wxFilePath.listFiles();
+                int length = files.length;
+                if(files==null||length==0){
+                    emitter.onError(new TaskException("微信下载目录暂无数据"));
+                }
+                for (int i = 0; i < length; i++) {
+                    FileInfo info=new FileInfo();
+                    if(info.isFile){
+                        File childFile = files[i];
+                        info.filePath=childFile.getAbsolutePath();
+                        info.fileName=childFile.getName();
+                        info.isFile=childFile.isFile();
+                        info.size=childFile.length();
+                        info.sizeStr=FileUtil.formatFileSize(info.size);
+                        info.time=childFile.lastModified();
+                        info.timeStr=TimeUtil.timeFormat(info.time);
+                        if(info.filePath.endsWith(".apk")){
+                            info.icon=FileUtil.getIconForApk(activity,info.filePath);
+                        }
+                    }
+                    list.add(info);
+                    emitter.onNext(list);
+                    emitter.onComplete();
                 }
             }
-        }
+        }).subscribe(new Subscriber<List<FileInfo>>() {
+            @Override
+            public void onNext(List<FileInfo> list) {
+                setFileDataToView(list);
+            }
+            @Override
+            public void onError(TaskException exception) {
+                super.onError(exception);
+                ToastUtils.showToast(exception.getMessage());
+            }
+        });
+
+    }
+
+    private void setFileDataToView(List<FileInfo> list) {
 
     }
 

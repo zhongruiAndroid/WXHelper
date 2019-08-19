@@ -16,6 +16,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
@@ -32,4 +38,6 @@ dependencies {
     implementation 'com.github:MyPermissions:1.0.2'
     implementation 'com.github:fastshape:1.0.9'
     implementation 'com.github:MyAsyncTask:1.0.2'
+
+    implementation(name:'LoadMoreAdapter-debug',ext:'aar')
 }
