@@ -1,6 +1,9 @@
 package com.tools.wx;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -35,14 +38,20 @@ public class FileUtil {
 
     public static Drawable getIconForApk(Context context,String apkPath){
         Drawable drawable=null;
-        PackageInfo packageInfo = context.getPackageManager().getPackageArchiveInfo(apkPath, PackageManager.GET_ACTIVITIES | PackageManager.GET_SERVICES);
+        PackageManager packageManager = context.getPackageManager();
+        PackageInfo packageInfo = packageManager.getPackageArchiveInfo(apkPath, PackageManager.GET_ACTIVITIES | PackageManager.GET_SERVICES);
         if (packageInfo != null) {
             String packageName = packageInfo.packageName;
             try {
-                drawable = context.getPackageManager().getApplicationIcon(packageName);
+                ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+                drawable=packageManager.getApplicationIcon(applicationInfo);
+                if(drawable==null){
+                    drawable =packageManager.getApplicationIcon(packageName);
+                }
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
-                return null;
+                drawable= packageInfo.applicationInfo.loadIcon(packageManager);
+                return drawable;
             }
         } else {
             return null;
@@ -136,6 +145,8 @@ public class FileUtil {
             {".xml",    "text/plain"},
             {".z",        "application/x-compress"},
             {".zip",    "application/zip"},
+            {".gradle",    "application/octet-stream"},
+            {".properties",    "application/octet-stream"},
             {"",        "*/*"}
     };
 }

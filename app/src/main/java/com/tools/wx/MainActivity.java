@@ -2,18 +2,23 @@ package com.tools.wx;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentProvider;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.LoginFilter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -230,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onNext(List<FileInfo> list) {
                 setData(list);
             }
-
             @Override
             public void onError(TaskException exception) {
                 super.onError(exception);
@@ -240,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 showContent();
             }
-
             @Override
             public void onComplete() {
                 super.onComplete();
@@ -341,7 +344,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//设置标记
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setAction(Intent.ACTION_VIEW);//动作，查看
-        Uri contentUri = FileProvider.getUriForFile(this, getPackageName(), file);
+        Uri contentUri;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
+            //小于7.0
+            contentUri = Uri.fromFile(file);
+        } else {
+            contentUri = FileProvider.getUriForFile(mContext, getPackageName(), file);
+        }
         intent.setDataAndType(contentUri, FileUtil.getMIMEType(file));//设置类型
         startActivity(intent);
     }
