@@ -33,11 +33,20 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
 
-    implementation  'com.android.support:recyclerview-v7:28.+'
 
     implementation 'com.github:MyPermissions:1.0.2'
     implementation 'com.github:fastshape:1.0.9'
     implementation 'com.github:MyAsyncTask:1.0.2'
 
+    implementation(name:'LoadTool',ext:'aar')
     implementation(name:'LoadMoreAdapter-debug',ext:'aar')
+    implementation(name:'MyProgressLayout-debug',ext:'aar')
+
+
+    implementation 'com.github.bumptech.glide:glide:4.0.0'
+//    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+
+    implementation  'com.android.support:recyclerview-v7:28.+'
+
+    implementation 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.3.0'
 }

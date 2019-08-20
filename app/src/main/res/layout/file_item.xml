@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <FrameLayout
+        android:id="@+id/flItem"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:paddingRight="10dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:id="@+id/tvNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="01"
+                />
+
+            <com.github.fastshape.MyImageView
+                android:id="@+id/ivFile"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:clipRadius="3dp"
+                tools:src="@drawable/empty_file"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                >
+
+                <TextView
+                    android:id="@+id/tvFileName"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:paddingTop="3dp"
+                    android:textColor="#000000"
+                    tools:text="title"
+                    />
+
+                <TextView
+                    android:id="@+id/tvFileDes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
+                    android:paddingBottom="5dp"
+                    android:textSize="10sp"
+                    tools:text="78.78KB | 2019-08-08 22:22:22"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.github.fastshape.MyTextView
+            android:id="@+id/tvDeleteLastName"
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_gravity="center_vertical|right"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="去掉.1后缀"
+            android:textColor="@color/colorPrimary"
+            android:textSize="11sp"
+            app:borderColor="@color/colorPrimary"
+            app:borderWidth="1px"
+            app:pressColor="@color/c_F8F8F82"
+            app:radius="13dp"
+            />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvDeleteFile"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:text="删  除"
+        android:background="@color/red"
+        android:textColor="@color/white"
+        android:ems="3"
+        android:gravity="center"
+        />
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>

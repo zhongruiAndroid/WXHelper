@@ -14,4 +14,17 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+    @Test
+    public void asf() {
+        String filePath="afsasf/afasf/1.123123/af.apk.1";
+        int index = filePath.lastIndexOf(".1");
+        String substring = filePath.substring(0, index);
+        System.out.println(filePath);
+        System.out.println(substring);
+    }
+
+    @Test
+    public void sdf() {
+        int a=9;
+    }
 }

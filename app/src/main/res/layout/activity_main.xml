@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<com.github.progresslayout.ProgressRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
-
+    tools:context=".MainActivity"
+    android:id="@+id/prlLoad"
+    >
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvFile"
         android:layout_width="match_parent"
@@ -22,8 +23,10 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_margin="10dp"
         android:layout_alignParentBottom="true"
+        android:padding="10dp"
+        android:elevation="10dp"
+        android:background="@color/white"
         >
         <com.github.fastshape.MyTextView
             android:id="@+id/tvDeleteName"
@@ -32,6 +35,9 @@
             android:layout_height="47dp"
             android:gravity="center"
             android:text="去除接收文件的.1后缀名"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textSize="13sp"
             android:textColor="@color/colorPrimary"
             app:borderColor="@color/colorPrimary"
             app:borderWidth="2px"
@@ -40,6 +46,8 @@
             app:bottomLeftRadius="25dp"
             app:solidColor="@color/white"
             android:layout_marginRight="1dp"
+            android:maxLines="2"
+            android:ellipsize="end"
             />
         <com.github.fastshape.MyTextView
             android:id="@+id/tvOpenDirectory"
@@ -48,6 +56,7 @@
             android:layout_height="47dp"
             android:gravity="center"
             android:text="刷新微信下载目录"
+            android:textSize="13sp"
             android:textColor="@color/colorPrimary"
             app:borderColor="@color/colorPrimary"
             app:borderWidth="2px"
@@ -56,7 +65,9 @@
             app:bottomRightRadius="25dp"
             app:solidColor="@color/white"
             android:layout_marginLeft="1dp"
+            android:maxLines="2"
+            android:ellipsize="end"
             />
     </LinearLayout>
 
-</RelativeLayout>
+</com.github.progresslayout.ProgressRelativeLayout>

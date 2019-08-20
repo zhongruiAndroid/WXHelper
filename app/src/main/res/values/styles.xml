@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="MyProgressLayoutStyle">@style/progressStyle</item>
     </style>
 
+    <style name="progressStyle">
+        <item name="progressView">@layout/app_loading_view</item>
+    </style>
 </resources>
