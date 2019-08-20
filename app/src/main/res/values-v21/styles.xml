@@ -1,20 +1,18 @@
 <resources>
+
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:windowContentTransitions">true</item>
         <item name="MyProgressLayoutStyle">@style/progressStyle</item>
     </style>
     <style name="AppTheme.NoActionBar" >
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-    <style name="progressStyle">
-        <item name="progressView">@layout/app_loading_view</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
     </style>
 
-    <style name="main_menu_style">
-        <item name="android:windowEnterAnimation">@anim/home_menu_show</item>
-        <item name="android:windowExitAnimation">@anim/home_menu_hidden</item>
-    </style>
+
 </resources>

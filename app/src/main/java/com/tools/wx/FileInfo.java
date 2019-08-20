@@ -18,6 +18,7 @@ public class FileInfo {
     public String fileName;
     public String timeStr;
     public long time;
+    public boolean isSelect;
 
     public boolean isApk(){
         if(TextUtils.isEmpty(fileName)){

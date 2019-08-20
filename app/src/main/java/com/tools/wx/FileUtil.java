@@ -119,6 +119,7 @@ public class FileUtil {
             {".mpe",    "video/mpeg"},
             {".mpeg",    "video/mpeg"},
             {".mpg",    "video/mpeg"},
+            {".flv",    "video/*"},
             {".mpg4",    "video/mp4"},
             {".mpga",    "audio/mpeg"},
             {".msg",    "application/vnd.ms-outlook"},
