@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -28,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.github.adapter.BaseDividerListItem;
 import com.github.adapter.CustomAdapter;
 import com.github.adapter.CustomViewHolder;
+import com.github.adapter.LoadMoreAdapter;
 import com.github.fastshape.MyTextView;
 import com.github.load.Loading;
 import com.github.permissions.MyPermission;
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         vMask = findViewById(R.id.vMask);
         prlLoad = findViewById(R.id.prlLoad);
         tvTitle = findViewById(R.id.tvTitle);
+        tvTitle.setOnClickListener(this);
         tvRightTitle = findViewById(R.id.tvRightTitle);
         tvRightTitle.setOnClickListener(this);
 
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(View v) {
                             goRenameFile(item);
+                            adapter.notifyDataSetChanged();
                         }
                     });
                 } else {
@@ -174,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tvReAllName:
-                ToastUtils.showToast("开发中...");
+//                ToastUtils.showToast("开发中...");
+                reAllName();
                 break;
             case R.id.tvOpenDirectory:
                 Loading.show(this);
@@ -184,7 +189,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showMenu();
                 controlMaskView(true);
                 break;
+            case R.id.tvTitle:
+                showDevelopInfo();
+                break;
         }
+    }
+
+    private void reAllName() {
+        final List<FileInfo> list = adapter.getList();
+        if(list==null||list.size()==0){
+            return;
+        }
+        Loading.show(this);
+        Task.start(new TaskPerform<Object>() {
+            @Override
+            public void perform(Emitter<Object> emitter) throws Exception {
+                for (int i = 0; i <list.size() ; i++) {
+                    FileInfo fileInfo = list.get(i);
+                    if(fileInfo.isApkHasPoint()){
+                        goRenameFile(list.get(i));
+                    }
+                }
+                emitter.onNext(null);
+                emitter.onComplete();
+            }
+        }).subscribe(new Subscriber<Object>() {
+            @Override
+            public void onNext(Object obj) {
+                getData();
+            }
+        });
+    }
+
+    private void showDevelopInfo() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("开发者简介");
+        builder.setMessage("不知名Android开发工程师,邮箱号2380253499@qq.com");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
 
@@ -471,12 +518,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             boolean result = renameFile(filePath, substring);
             if (result) {
                 info.refreshFile(this, substring);
-                adapter.notifyDataSetChanged();
             } else {
-                ToastUtils.showToast("操作失败");
+                ToastUtils.showToast(file.getName()+"操作失败");
             }
         } else {
-            ToastUtils.showToast("该文件不存在");
+            ToastUtils.showToast(file.getName()+"文件不存在");
         }
     }
 
