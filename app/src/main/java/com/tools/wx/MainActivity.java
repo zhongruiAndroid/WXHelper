@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter = new CustomAdapter<FileInfo>(R.layout.file_item) {
             @Override
             public void bindData(CustomViewHolder holder, int position, final FileInfo item) {
-                final SwipeMenuLayout smlItem = holder.getView(R.id.smlItem);
                 View tvDeleteFile = holder.getView(R.id.tvDeleteFile);
                 View flItem = holder.getView(R.id.flItem);
                 TextView tvNum = holder.getView(R.id.tvNum);
@@ -119,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     tvDeleteLastName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            smlItem.smoothClose();
                             goRenameFile(item);
                         }
                     });

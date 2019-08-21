@@ -11,6 +11,5 @@ gradle/
 gradle.properties
 *.apk
 .svn
-*.jks
 *.json
 !demo/
