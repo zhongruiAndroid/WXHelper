@@ -2,6 +2,8 @@ package com.tools.wx;
 
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.junit.Assert.*;
 
 /**
@@ -16,7 +18,10 @@ public class ExampleUnitTest {
     }
     @Test
     public void asf() {
-        String filePath="afsasf/afasf/1.123123/af.apk.1";
+        String filePath="afsasfaf.apk.1";
+        File file=new File(filePath);
+        System.out.println(file.getName());
+        System.out.println("=============");
         int index = filePath.lastIndexOf(".1");
         String substring = filePath.substring(0, index);
         System.out.println(filePath);

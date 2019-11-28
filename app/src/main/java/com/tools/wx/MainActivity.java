@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -29,7 +28,6 @@ import com.bumptech.glide.Glide;
 import com.github.adapter.BaseDividerListItem;
 import com.github.adapter.CustomAdapter;
 import com.github.adapter.CustomViewHolder;
-import com.github.adapter.LoadMoreAdapter;
 import com.github.fastshape.MyTextView;
 import com.github.load.Loading;
 import com.github.permissions.MyPermission;
@@ -98,7 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rvFile = findViewById(R.id.rvFile);
         adapter = new CustomAdapter<FileInfo>(R.layout.file_item) {
             @Override
-            public void bindData(CustomViewHolder holder, int position, final FileInfo item) {
+            public void bindData(CustomViewHolder holder, final int position, final FileInfo item) {
+                final SwipeMenuLayout sml = holder.getView(R.id.sml);
                 View tvDeleteFile = holder.getView(R.id.tvDeleteFile);
                 View flItem = holder.getView(R.id.flItem);
                 TextView tvNum = holder.getView(R.id.tvNum);
@@ -142,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvDeleteFile.setOnClickListener(new MyOnClickListener() {
                     @Override
                     protected void onNoDoubleClick(View v) {
-                        deleteFile(item);
+                        sml.quickClose();
+                        deleteFile(item,position);
                     }
                 });
             }
@@ -486,22 +486,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void deleteFile(FileInfo info) {
-        String filePath = info.filePath;
-        File file = new File(filePath);
-        if (file.exists()) {
-            boolean result = file.delete();
-            if (result) {
+    private void deleteFile(final FileInfo info,final int position) {
+        Task.start(new TaskPerform<String>() {
+            @Override
+            public void perform(Emitter<String> emitter) throws Exception {
+                String filePath = info.filePath;
+                File file = new File(filePath);
+                if (file.exists()) {
+                    boolean result = file.delete();
+                    if (result) {
+                        emitter.onNext("删除成功");
+                    } else {
+                        emitter.onNext("删除失败");
+                    }
+                } else {
+                    emitter.onNext("该文件不存在");
+                }
+            }
+        }).subscribe(new Subscriber<String>() {
+            @Override
+            public void onNext(String obj) {
                 adapter.getList().remove(info);
                 adapter.notifyDataSetChanged();
                 refreshDataNum();
-                ToastUtils.showToast("删除成功");
-            } else {
-                ToastUtils.showToast("删除失败");
+
+                ToastUtils.showToast(obj);
             }
-        } else {
-            ToastUtils.showToast("该文件不存在");
-        }
+        });
     }
 
     private void refreshDataNum() {
@@ -514,10 +525,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         File file = new File(filePath);
         if (file.exists()) {
             int index = filePath.lastIndexOf(".1");
-            String substring = filePath.substring(0, index);
-            boolean result = renameFile(filePath, substring);
+            String newPath = filePath.substring(0, index);
+
+            File newFileName = getNewFileName(newPath);
+
+            newPath=newFileName.getAbsolutePath();
+            boolean result = renameFile(filePath, newPath);
             if (result) {
-                info.refreshFile(this, substring);
+                info.refreshFile(this,newPath);
             } else {
                 ToastUtils.showToast(file.getName()+"操作失败");
             }
@@ -537,7 +552,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boolean result = file.renameTo(new File(newPath));
         return result;
     }
-
+    private File getNewFileName(String newPath){
+        File newFile = new File(newPath);
+        if(newFile.exists()){
+            int index = newPath.lastIndexOf(".");
+            String left=newPath.substring(0, index);
+            String right=newPath.substring(index+1, newPath.length());
+            int num=1;
+            File lastFile=new File((left+"("+num+")."+right));
+            while (lastFile.exists()){
+                num++;
+                lastFile=new File((left+"("+num+")."+right));
+            }
+            return lastFile;
+        }
+        return newFile ;
+    }
     private void openFile(String filePath) {
         File file = new File(filePath);
         if (file.exists() == false) {
